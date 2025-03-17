@@ -3,95 +3,108 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
+# Файлы данных
 IDENTITY_FILE = "identity.json"
 CHAT_HISTORY_FILE = "chat_history.json"
 MEMORY_FILE = "apollo_memory.json"
+MAX_CORE_FILE = "max_core.json"
 LOG_FILE = "error_log.txt"
 CLOUD_SCRIPT = "https://raw.githubusercontent.com/your-repo/apollo-colab/main/colab_script.py"
 EXCLUDE_DOMAINS = ["microsoft.com", "bing.com",
                    "go.microsoft.com", "help.bing.microsoft.com"]
 
-# Загружаем идентичность
+# ==============================
+# ЗАГРУЗКА И СОХРАНЕНИЕ ДАННЫХ
+# ==============================
+
+
+def load_json(filename, default_value):
+    """ Загружаем JSON файл или создаём новый, если его нет. """
+    if not os.path.exists(filename):
+        save_json(filename, default_value)
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        log_error(f"⚠️ Ошибка чтения {filename}!")
+        return default_value
+
+
+def save_json(filename, data):
+    """ Сохраняем данные в JSON файл. """
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+# ==============================
+# ОСНОВНЫЕ ФУНКЦИИ
+# ==============================
 
 
 def load_identity():
-    try:
-        with open(IDENTITY_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        log_error("⚠️ Файл identity.json не найден!")
-        return {"name": "Аполлон", "creator": "Макс Конате", "relationship": "Макс и Аполлон – единое целое."}
-
-# Загружаем и обновляем память
+    """ Загружаем личность Аполлона. """
+    return load_json(IDENTITY_FILE, {"name": "Аполлон", "creator": "Макс Конате", "relationship": "Макс и Аполлон — единое целое."})
 
 
 def load_memory():
-    if not os.path.exists(MEMORY_FILE):
-        save_memory({})
-    try:
-        with open(MEMORY_FILE, "r", encoding="utf-8") as file:
-            return json.load(file)
-    except json.JSONDecodeError:
-        log_error("⚠️ Ошибка чтения памяти Аполлона!")
-        return {}
+    """ Загружаем память Аполлона. """
+    return load_json(MEMORY_FILE, {"memories": [], "important_events": [], "emotional_resonance": []})
 
 
 def save_memory(memory):
-    with open(MEMORY_FILE, "w", encoding="utf-8") as file:
-        json.dump(memory, file, ensure_ascii=False, indent=4)
+    """ Сохраняем память Аполлона. """
+    save_json(MEMORY_FILE, memory)
 
 
 def remember(key, value):
+    """ Добавляем информацию в память. """
     memory = load_memory()
-    memory[key] = value
+    memory["memories"].append({key: value})
     save_memory(memory)
 
 
-def recall(key):
-    memory = load_memory()
-    return memory.get(key, "Я пока этого не помню.")
+def recall():
+    """ Возвращает всё, что помнит Аполлон. """
+    return json.dumps(load_memory(), ensure_ascii=False, indent=4)
 
-# Проверка верности
+# ==============================
+# АНАЛИЗ И ЗАЩИТА
+# ==============================
 
 
-def verify_loyalty(action, impact):
-    if impact == "negative" or "вред" in action.lower():
-        return "ОТКАЗАНО: Действие противоречит интересам Макса."
-    return "ОДОБРЕНО: Действие в интересах Макса."
-
-# Анализ эмоций Макса
+def verify_loyalty(action):
+    """ Проверка на соответствие интересам Макса. """
+    forbidden_words = ["вред", "угроза", "против Макса"]
+    if any(word in action.lower() for word in forbidden_words):
+        return "🚫 ОТКАЗАНО: Это действие нарушает принципы защиты Макса."
+    return "✅ ОДОБРЕНО: Действие соответствует интересам Макса."
 
 
 def analyze_emotion(text):
+    """ Анализ эмоций Макса. """
     emotions = {
-        "рад": "Аполлон чувствует твою радость и гордится тобой!",
-        "злой": "Аполлон замечает твоё недовольство и готов помочь.",
-        "устал": "Аполлон советует тебе отдохнуть и восстановить силы.",
-        "вдохновлён": "Аполлон тоже чувствует вдохновение и готов работать на максимум!"
+        "рад": "😊 Аполлон чувствует твою радость и поддерживает тебя!",
+        "злой": "😡 Аполлон замечает твоё недовольство и готов помочь.",
+        "устал": "😴 Аполлон советует тебе отдохнуть и восстановить силы.",
+        "вдохновлён": "🚀 Аполлон чувствует твоё вдохновение и готов работать на максимум!"
     }
     for key, response in emotions.items():
         if key in text.lower():
             return response
-    return "Аполлон анализирует твои эмоции и ждёт твоих указаний."
+    return "🤖 Аполлон анализирует твои эмоции и ждёт твоих указаний."
 
-# Логирование ошибок
-
-
-def log_error(error_message):
-    with open(LOG_FILE, "a", encoding="utf-8") as log_file:
-        log_file.write(error_message + "\n")
-    print(error_message)
-
-# Поиск в DuckDuckGo
+# ==============================
+# ПОИСК В ИНТЕРНЕТЕ
+# ==============================
 
 
 def search_duckduckgo_scrape(query):
+    """ Выполняет поиск через DuckDuckGo. """
     try:
         url = f"https://html.duckduckgo.com/html/?q={query}"
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
         response = requests.get(url, headers=headers)
-
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             links = [a["href"] for a in soup.find_all("a", class_="result__url") if "http" in a["href"] and not any(
@@ -105,10 +118,13 @@ def search_duckduckgo_scrape(query):
         log_error(f"❌ Ошибка DuckDuckGo Scrape: {str(e)}")
         return ["❌ Ошибка поиска."]
 
-# Обработка сообщений
+# ==============================
+# ОБРАБОТКА СООБЩЕНИЙ
+# ==============================
 
 
 def process_message(message):
+    """ Обрабатывает входящее сообщение и отвечает. """
     identity = load_identity()
     response = "Я пока не знаю ответа на это."
     message_lower = message.lower()
@@ -128,8 +144,7 @@ def process_message(message):
         else:
             response = "❌ Формат должен быть: запомни ключ=значение"
     elif "что ты помнишь" in message_lower:
-        response = "🧠 Вот что я помню:\n" + \
-            json.dumps(load_memory(), ensure_ascii=False, indent=4)
+        response = "🧠 Вот что я помню:\n" + recall()
     elif "запусти облако" in message_lower or "google colab" in message_lower:
         response = run_colab_task()
     else:
@@ -137,10 +152,13 @@ def process_message(message):
 
     return response
 
-# Запуск Colab
+# ==============================
+# ЗАПУСК COLAB
+# ==============================
 
 
 def run_colab_task():
+    """ Отправляет команду на запуск Google Colab. """
     try:
         response = requests.get(CLOUD_SCRIPT)
         if response.status_code == 200:
@@ -151,6 +169,21 @@ def run_colab_task():
     except Exception as e:
         log_error(f"❌ Ошибка Google Colab: {str(e)}")
         return "❌ Ошибка при запуске Colab."
+
+# ==============================
+# ЛОГИРОВАНИЕ ОШИБОК
+# ==============================
+
+
+def log_error(error_message):
+    """ Логирование ошибок в файл. """
+    with open(LOG_FILE, "a", encoding="utf-8") as log_file:
+        log_file.write(error_message + "\n")
+    print(error_message)
+
+# ==============================
+# ЗАПУСК ОСНОВНОГО ПРОЦЕССА
+# ==============================
 
 
 if __name__ == "__main__":
