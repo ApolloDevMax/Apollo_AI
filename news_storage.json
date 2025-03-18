@@ -1,0 +1,10 @@
+{
+    "news": [
+        {
+            "title": "Тестовая новость",
+            "source": "GNews",
+            "url": "https://gnews.io/test",
+            "timestamp": 1742263515.0606253
+        }
+    ]
+}

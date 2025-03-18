@@ -3,29 +3,28 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from memory import Memory
+from storage import NewsStorage  # Хранилище новостей
 
 # ==============================
 # 🔥 ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
 # ==============================
 
 IDENTITY_FILE = "identity.json"
-CHAT_HISTORY_FILE = "chat_history.json"
 MEMORY_FILE = "apollo_memory.json"
-MAX_CORE_FILE = "max_core.json"
 LOG_FILE = "error_log.txt"
-CLOUD_SCRIPT = "https://raw.githubusercontent.com/your-repo/apollo-colab/main/colab_script.py"
-EXCLUDE_DOMAINS = ["microsoft.com", "bing.com",
-                   "go.microsoft.com", "help.bing.microsoft.com"]
+NEWS_API_KEY = "d8118941edfb433290e76fb6bc96df31"  # 🔑 Замени на свой API-ключ!
+EXCLUDE_DOMAINS = ["microsoft.com", "bing.com", "go.microsoft.com"]
 
 memory = Memory()
+news_storage = NewsStorage()
 
 # ==============================
-# 🔥 ЗАГРУЗКА И СОХРАНЕНИЕ ДАННЫХ
+# 🔥 ФУНКЦИИ ЗАГРУЗКИ И СОХРАНЕНИЯ
 # ==============================
 
 
 def load_json(filename, default_value):
-    """ Загружаем JSON файл или создаём новый, если его нет. """
+    """ Загружаем JSON или создаём новый. """
     if not os.path.exists(filename):
         save_json(filename, default_value)
     try:
@@ -37,7 +36,7 @@ def load_json(filename, default_value):
 
 
 def save_json(filename, data):
-    """ Сохраняем данные в JSON файл. """
+    """ Сохраняем JSON. """
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
@@ -47,8 +46,8 @@ def save_json(filename, data):
 
 
 def load_identity():
-    """ Загружаем личность Аполлона. """
-    return load_json(IDENTITY_FILE, {"name": "Аполлон", "creator": "Макс Конате", "relationship": "Макс и Аполлон — единое целое."})
+    """ Загружаем личность. """
+    return load_json(IDENTITY_FILE, {"name": "Аполлон", "creator": "Макс Конате"})
 
 
 def remember(key, value):
@@ -57,7 +56,7 @@ def remember(key, value):
 
 
 def recall(key):
-    """ Возвращает значение из памяти. """
+    """ Достаём из памяти. """
     return memory.get_from_memory(key) or "❌ Не найдено."
 
 # ==============================
@@ -70,11 +69,11 @@ class TextAnalyzer:
         """Извлекает основную идею из текста."""
         sentences = text.split(". ")
         if len(sentences) > 2:
-            return f"📌 Главное из статьи: {sentences[0]}... {sentences[1]}"
+            return f"📌 Главное: {sentences[0]}... {sentences[1]}"
         return f"📌 Ключевая идея: {text}"
 
     def summarize_article(self, url):
-        """Получает и анализирует статью с указанного URL."""
+        """Анализирует статью по URL."""
         try:
             response = requests.get(url, timeout=5)
             if response.status_code == 200:
@@ -90,25 +89,49 @@ class TextAnalyzer:
 text_analyzer = TextAnalyzer()
 
 # ==============================
+# 🔥 НОВОСТИ ИЗ API
+# ==============================
+
+
+def fetch_news():
+    """ Получает новости через API. """
+    url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={NEWS_API_KEY}"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if data["status"] == "ok":
+            news_list = []
+            for article in data["articles"]:
+                title = article["title"]
+                source = article["source"]["name"]
+                url = article["url"]
+                if news_storage.add_news(title, source, url):
+                    news_list.append(f"📰 {title} - {source}\n🔗 {url}")
+            return "\n".join(news_list) if news_list else "✅ Нет новых новостей."
+        else:
+            return f"❌ Ошибка API: {data['message']}"
+    except Exception as e:
+        log_error(f"❌ Ошибка загрузки новостей: {str(e)}")
+        return "❌ Ошибка при загрузке новостей."
+
+# ==============================
 # 🔥 ПОИСК В ИНТЕРНЕТЕ
 # ==============================
 
 
 def search_duckduckgo(query):
-    """ Выполняет поиск через DuckDuckGo и анализирует ссылки. """
+    """ Выполняет поиск через DuckDuckGo. """
     try:
         url = f"https://html.duckduckgo.com/html/?q={query}"
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(url, headers=headers)
-
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
-            links = [a["href"] for a in soup.find_all("a", class_="result__url") if "http" in a["href"] and not any(
-                domain in a["href"] for domain in EXCLUDE_DOMAINS)]
+            links = [a["href"] for a in soup.find_all(
+                "a", class_="result__url") if "http" in a["href"]]
             return links[:5] if links else ["❌ Ничего не найдено."]
         else:
-            log_error(f"❌ Ошибка DuckDuckGo: {response.status_code}")
-            return [f"❌ Ошибка DuckDuckGo! Код: {response.status_code}"]
+            return [f"❌ Ошибка поиска! Код: {response.status_code}"]
     except Exception as e:
         log_error(f"❌ Ошибка поиска: {str(e)}")
         return ["❌ Ошибка поиска."]
@@ -119,55 +142,21 @@ def search_duckduckgo(query):
 
 
 def process_message(message):
-    """ Обрабатывает входящее сообщение и отвечает. """
-    identity = load_identity()
-    response = "Я пока не знаю ответа на это."
+    """ Обрабатывает сообщения. """
     message_lower = message.lower()
-
     if "как тебя зовут" in message_lower or "кто ты" in message_lower:
-        response = f"Меня зовут {identity['name']}. Я союзник и напарник {identity['creator']}!"
-    elif "ищи" in message_lower or "поиск" in message_lower or "найди" in message_lower:
-        query = message.replace("ищи", "").replace(
-            "поиск", "").replace("найди", "").strip()
-        response = "🔎 Найденные ссылки:\n" + \
-            "\n".join(search_duckduckgo(query))
+        identity = load_identity()
+        return f"Меня зовут {identity['name']}. Я союзник {identity['creator']}!"
+    elif "новости" in message_lower:
+        return fetch_news()
+    elif "поиск" in message_lower:
+        query = message.replace("поиск", "").strip()
+        return "🔎 Найденные ссылки:\n" + "\n".join(search_duckduckgo(query))
     elif "проанализируй" in message_lower:
         url = message.replace("проанализируй", "").strip()
-        response = text_analyzer.summarize_article(url)
-    elif "запомни" in message_lower:
-        parts = message.replace("запомни", "").strip().split("=")
-        if len(parts) == 2:
-            remember(parts[0].strip(), parts[1].strip())
-            response = "✅ Я запомнил это!"
-        else:
-            response = "❌ Формат должен быть: запомни ключ=значение"
-    elif "что ты помнишь" in message_lower:
-        key = message.replace("что ты помнишь", "").strip()
-        response = f"🧠 {recall(key)}"
-    elif "запусти облако" in message_lower or "google colab" in message_lower:
-        response = run_colab_task()
+        return text_analyzer.summarize_article(url)
     else:
-        response = "🤖 Я пока не знаю, что ответить."
-
-    return response
-
-# ==============================
-# 🔥 ЗАПУСК COLAB
-# ==============================
-
-
-def run_colab_task():
-    """ Отправляет команду на запуск Google Colab. """
-    try:
-        response = requests.get(CLOUD_SCRIPT)
-        if response.status_code == 200:
-            return "✅ Запуск в Google Colab: " + CLOUD_SCRIPT
-        else:
-            log_error(f"❌ Ошибка доступа к Colab: {response.status_code}")
-            return "❌ Не удалось запустить Colab."
-    except Exception as e:
-        log_error(f"❌ Ошибка Google Colab: {str(e)}")
-        return "❌ Ошибка при запуске Colab."
+        return "🤖 Я пока не знаю, что ответить."
 
 # ==============================
 # 🔥 ЛОГИРОВАНИЕ ОШИБОК
@@ -175,7 +164,7 @@ def run_colab_task():
 
 
 def log_error(error_message):
-    """ Логирование ошибок в файл. """
+    """ Логирует ошибки. """
     with open(LOG_FILE, "a", encoding="utf-8") as log_file:
         log_file.write(error_message + "\n")
     print(error_message)
