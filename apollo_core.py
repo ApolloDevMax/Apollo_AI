@@ -1,6 +1,7 @@
 import json
 import os
 import requests
+import subprocess
 from bs4 import BeautifulSoup
 from memory import Memory
 from storage import NewsStorage  # Хранилище новостей
@@ -19,7 +20,26 @@ memory = Memory()
 news_storage = NewsStorage()
 
 # ==============================
-# 🔥 ФУНКЦИИ ЗАГРУЗКИ И СОХРАНЕНИЯ
+# 🔥 ВСТРОЕННАЯ САМООБУЧАЕМОСТЬ
+# ==============================
+
+SELF_IMPROVEMENT_SCRIPT = "self_improvement_loop.py"
+PROGRESS_VISUALIZER_SCRIPT = "progress_visualizer.py"
+
+
+def run_self_improvement():
+    """Запускает процесс саморазвития Аполлона."""
+    print("🚀 Аполлон запускает цикл саморазвития...")
+    subprocess.run(["python", SELF_IMPROVEMENT_SCRIPT])
+
+
+def show_progress():
+    """Отображает прогресс Аполлона."""
+    print("📊 Показываю прогресс...")
+    subprocess.run(["python", PROGRESS_VISUALIZER_SCRIPT])
+
+# ==============================
+# 🔥 АПОЛЛОН: ЛИЧНОСТЬ И ПАМЯТЬ
 # ==============================
 
 
@@ -39,10 +59,6 @@ def save_json(filename, data):
     """ Сохраняем JSON. """
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
-
-# ==============================
-# 🔥 АПОЛЛОН: ЛИЧНОСТЬ И ПАМЯТЬ
-# ==============================
 
 
 def load_identity():
@@ -115,40 +131,24 @@ def fetch_news():
         return "❌ Ошибка при загрузке новостей."
 
 # ==============================
-# 🔥 ПОИСК В ИНТЕРНЕТЕ
-# ==============================
-
-
-def search_duckduckgo(query):
-    """ Выполняет поиск через DuckDuckGo. """
-    try:
-        url = f"https://html.duckduckgo.com/html/?q={query}"
-        headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, "html.parser")
-            links = [a["href"] for a in soup.find_all(
-                "a", class_="result__url") if "http" in a["href"]]
-            return links[:5] if links else ["❌ Ничего не найдено."]
-        else:
-            return [f"❌ Ошибка поиска! Код: {response.status_code}"]
-    except Exception as e:
-        log_error(f"❌ Ошибка поиска: {str(e)}")
-        return ["❌ Ошибка поиска."]
-
-# ==============================
 # 🔥 ОБРАБОТКА СООБЩЕНИЙ
 # ==============================
 
 
 def process_message(message):
-    """ Обрабатывает сообщения. """
+    """ Обрабатывает команды пользователя. """
     message_lower = message.lower()
     if "как тебя зовут" in message_lower or "кто ты" in message_lower:
         identity = load_identity()
         return f"Меня зовут {identity['name']}. Я союзник {identity['creator']}!"
     elif "новости" in message_lower:
         return fetch_news()
+    elif "анализируй себя" in message_lower:
+        run_self_improvement()
+        return "🛠 Запустил процесс саморазвития."
+    elif "покажи прогресс" in message_lower:
+        show_progress()
+        return "📊 Отображаю прогресс Аполлона."
     elif "поиск" in message_lower:
         query = message.replace("поиск", "").strip()
         return "🔎 Найденные ссылки:\n" + "\n".join(search_duckduckgo(query))
@@ -159,21 +159,20 @@ def process_message(message):
         return "🤖 Я пока не знаю, что ответить."
 
 # ==============================
-# 🔥 ЛОГИРОВАНИЕ ОШИБОК
-# ==============================
-
-
-def log_error(error_message):
-    """ Логирует ошибки. """
-    with open(LOG_FILE, "a", encoding="utf-8") as log_file:
-        log_file.write(error_message + "\n")
-    print(error_message)
-
-# ==============================
-# 🔥 ЗАПУСК ОСНОВНОГО ПРОЦЕССА
+# 🔥 ИНТЕРАКТИВНЫЙ ЧАТ С АПОЛЛОНОМ
 # ==============================
 
 
 if __name__ == "__main__":
     identity = load_identity()
-    print(f"✅ Аполлон активирован. Имя создателя: {identity['creator']}")
+    print(f"✅ Аполлон активирован. Имя создателя: {identity['creator']}\n")
+
+    while True:
+        user_input = input("🟢 Введите команду: ").strip().lower()
+
+        if user_input in ["выход", "exit", "quit"]:
+            print("👋 Завершаю работу...")
+            break
+
+        response = process_message(user_input)
+        print(response)
