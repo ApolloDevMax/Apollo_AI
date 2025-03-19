@@ -88,3 +88,4 @@ if __name__ == "__main__":
     ai.analyze_world()
     print("✅ Анализ мира завершён! Данные добавлены в память.")
 # test
+# test
