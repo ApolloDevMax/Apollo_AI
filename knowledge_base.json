@@ -263,5 +263,81 @@
     "Apr 28, 2021 ... Capital markets' rich history of using cutting-edge technology now includes AI to open new opportunities in the sector. Foresight and planning ...",
     "Nov 28, 2019 ... They built custom machine-learning models to intelligently analyze product listings. These models can look past the basics like image and title ...",
     "Our workshop on the future of third-party AI evaluation dives into these topics with experts on: You can watch the event on YouTube here.",
-    "2 days ago ... ai's multimodal AI agents—powered by Gemini models and running on Google Cloud infrastructure—are transforming how game testing is conducted."
+    "2 days ago ... ai's multimodal AI agents—powered by Gemini models and running on Google Cloud infrastructure—are transforming how game testing is conducted.",
+    "Oct 30, 2024 ... Powerful infrastructure innovations for your AI-first future · Google Axion Processors: Redefining CPU performance and efficiency · Titanium and ...",
+    "❌ Ошибка от OpenRouter: {'message': 'More credits are required to run this request. 4096 token capacity required, 666 available. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account', 'code': 402}",
+    "❌ Ошибка от OpenRouter: {'message': 'More credits are required to run this request. 4096 token capacity required, 666 available. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account', 'code': 402}",
+    "❌ Ошибка от OpenRouter: {'message': 'More credits are required to run this request. 4096 token capacity required, 666 available. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account', 'code': 402}",
+    {
+        "topic": "Квантовый интеллект",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "AI стартапы",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "Технологии будущего",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "AGI",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "AI стартапы",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "AI стартапы",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "AI стартапы",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "Технологии будущего",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "AI стартапы",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "Квантовый интеллект",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "AGI",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "Квантовый интеллект",
+        "content": "❌ Ошибка Gemini API: 404 - {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"models/gemini-pro is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.\",\n    \"status\": \"NOT_FOUND\"\n  }\n}\n"
+    },
+    {
+        "topic": "Квантовый интеллект",
+        "content": "Текст упоминает о быстром развитии технологий, особенно искусственного интеллекта и квантовых технологий. В нем анонсируются книги \"Инновации 21 века\" и \"Квантовое мышление\", а также новость о российском квантовом компьютере, полезном для бизнеса и студентов.\n"
+    },
+    {
+        "topic": "AI стартапы",
+        "content": "Google Cloud предлагает стартапам до $250,000 в кредитах Google Cloud, обучении и других ресурсах, включая экспертизу в AI и Web3, чтобы ускорить их рост. Также, 16 декабря 2024 года стартует 10-недельный акселератор для AI-первых стартапов из США и Канады.\n"
+    },
+    {
+        "topic": "Технологии будущего",
+        "content": "Суть текста:\n\n1.  **Улучшение преподавания и обучения через цифровые технологии (JCPS).**\n2.  **Китайская выставка высоких технологий (CHTF 2022) в Шэньчжэне.**\n3.  **Приложение с дополненной реальностью для хоккейного клуба \"Адмирал\".**\n"
+    },
+    {
+        "topic": "AGI",
+        "content": "AGI (Artificial General Intelligence) - гипотетический интеллект машины, способной понимать и изучать любую интеллектуальную задачу, доступную человеку. Также упоминается AgI (йодид серебра) как ионный проводник, важный для наноустройств.\n"
+    },
+    {
+        "topic": "AGI",
+        "content": "AGI (Artificial General Intelligence) - это гипотетический уровень машинного интеллекта, сравнимый с человеческим в способности понимать и обучаться любым интеллектуальным задачам. Также упоминается AgI (йодид серебра) как ионный проводник для наноустройств.\n"
+    },
+    {
+        "topic": "Web3",
+        "content": "Google Cloud предлагает инструменты и инфраструктуру для быстрой и безопасной разработки и масштабирования Web3 проектов, а также возможности для роста, включая продвижение на Google Cloud Marketplace и поддержку от Web3 команды Google Cloud. Цель - предоставить ресурсы, технологии и сообщество для создания децентрализованных приложений, Web3 инструментов и сервисов.\n"
+    }
 ]
